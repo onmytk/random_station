@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     baseURL: '/random_station/'
   },
   build: {
-    transpile: ['vuetify'],
+    transpile: ['/vuetify/'],
   },
   hooks: {
     'vite:extendConfig': (config) => {
