@@ -3,7 +3,7 @@ import vuetify from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
   app: {
-    baseURL: '/random_station'
+    baseURL: '/random_station/'
   },
   build: {
     transpile: ['vuetify'],
