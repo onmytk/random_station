@@ -88,10 +88,11 @@ const lineName = computed(() => {
     </v-btn>
 
     <v-btn
-      color="amber"
+      color="primary"
       @click="stopRandomSelect"
       v-if="roulette"
       size="large"
+      rounded="xl"
     >
       ストップ
     </v-btn>
