@@ -24,7 +24,7 @@ const { data: lineMaster } = await useFetch('/station/line20230327free.json')
 // 駅データから選択されている県
 const randomSelect = () => {
   const filterdStation = stationData.value.filter(s => selectedPref.value.includes(s.pref_cd))
-  return filterdStation[Math.floor(Math.random() * filterdStation.length)]
+  return filterdStation.length > 0 ? filterdStation[Math.floor(Math.random() * filterdStation.length)] : {}
 }
 
 // 結果
