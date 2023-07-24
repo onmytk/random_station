@@ -4,7 +4,6 @@ import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 
 const zoom = ref(9)
 const center = [35.6769883, 139.7588499]
-const coordinates = ref([50, 50])
 const selectedPref = ref([14])
 let roulette = ref(false)
 
@@ -25,10 +24,6 @@ const { data: lineMaster } = await useFetch('/station/line20230327free.json')
 // 駅データから選択されている県
 const randomSelect = () => {
   const filterdStation = stationData.value.filter(s => selectedPref.value.includes(s.pref_cd))
-  const selectStation = filterdStation[Math.floor(Math.random() * filterdStation.length)]
-  
-  
-
   return filterdStation[Math.floor(Math.random() * filterdStation.length)]
 }
 
@@ -62,10 +57,6 @@ const lineName = computed(() => {
   return lineMaster.value.filter(l => {
     return l.line_cd === result.value.line_cd
   })[0]
-})
-
-const checkPrefList = computed(() => {
-  return selectedPref.value.length < 0 ? false : true
 })
 
 </script>
@@ -107,8 +98,8 @@ const checkPrefList = computed(() => {
     </v-btn>
   </div>
 
+  <!-- 駅名表示 -->
   <div class="d-flex flex-column mb-6">
-    <!-- 駅名表示 -->
     <v-card
       v-if="result.station_name"
       :href="url"
@@ -131,7 +122,7 @@ const checkPrefList = computed(() => {
       ></l-tile-layer>
 
       <!-- マーカー表示 -->
-      <l-marker :lat-lng="[result.lat ? result.lat : 0, result.lon ? result.lon : 0]"> </l-marker>
+      <l-marker :lat-lng="[result.lat ? result.lat : center[0], result.lon ? result.lon : center[1]]"> </l-marker>
     </l-map>
   </div>
 </template>
