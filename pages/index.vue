@@ -19,9 +19,16 @@ const { data: stationData } = await useFetch('/station/station20230327free.json'
 // 県データを取得
 const { data: prefMaster } = await useFetch('/station/pref_master.json')
 
+// 路線データを取得
+const { data: lineMaster } = await useFetch('/station/line20230327free.json')
+
 // 駅データから選択されている県
 const randomSelect = () => {
   const filterdStation = stationData.value.filter(s => selectedPref.value.includes(s.pref_cd))
+  const selectStation = filterdStation[Math.floor(Math.random() * filterdStation.length)]
+  
+  
+
   return filterdStation[Math.floor(Math.random() * filterdStation.length)]
 }
 
@@ -47,54 +54,75 @@ const stopRandomSelect = () => {
 
 // URLの設定
 const url = computed(() => {
-  return "https://www.google.com/search?q="+result.value.station_name
+  return "https://www.google.com/search?q="+result.value.station_name+"駅"
+})
+
+// 路線取得
+const lineName = computed(() => {
+  return lineMaster.value.filter(l => {
+    return l.line_cd === result.value.line_cd
+  })[0]
 })
 
 const checkPrefList = computed(() => {
   return selectedPref.value.length < 0 ? false : true
 })
 
-watch(selectedPref, () => { console.log(selectedPref.value)})
-
 </script>
 
 <template>
-  <!-- 対象の県の選択 -->
-  <v-select
-    v-model="selectedPref"
-    label="Select"
-    :items="prefMaster"
-    item-title="pref"
-    item-value="key"
-    variant="outlined"
-    clearable
-    multiple
-    chips
-  >
-  </v-select>
+  <div class="d-flex flex-column mb-6">
+    <!-- 対象の県の選択 -->
+    <v-select
+      v-model="selectedPref"
+      label="県を選択"
+      :items="prefMaster"
+      item-title="pref"
+      item-value="key"
+      clearable
+      multiple
+      closable-chips
+      chips
+    >
+    </v-select>
 
-  <!-- スタート/ストップボタン -->
-  <v-btn
-    color="primary"
-    @click="startRandomSelect"
-    v-if="!roulette"
-  >
-    スタート
-  </v-btn>
+    <!-- スタート/ストップボタン -->
+    <v-btn
+      color="indigo"
+      @click="startRandomSelect"
+      v-if="!roulette"
+      size="large"
+    >
+      スタート
+    </v-btn>
 
-  <v-btn
-    color="blue"
-    @click="stopRandomSelect"
-    v-if="roulette"
-  >
-    ストップ
-  </v-btn>
+    <v-btn
+      color="primary"
+      @click="stopRandomSelect"
+      v-if="roulette"
+      size="large"
+      rounded="xl"
+    >
+      ストップ
+    </v-btn>
+  </div>
 
-  <!-- 駅名表示 -->
-  <a v-if="result.station_name" :href="url" target="_blank" rel="noopener noreferrer">{{ result.station_name }}駅</a>
+  <div class="d-flex flex-column mb-6">
+    <!-- 駅名表示 -->
+    <v-card
+      v-if="result.station_name"
+      :href="url"
+      target="_blank"
+      rel="noopener noreferrer"
+      color="indigo-lighten-5"
+    >
+      <v-card-title>{{ lineName.line_name }} {{ result.station_name }}駅</v-card-title>
+      <v-card-text>{{ result.address }}</v-card-text>
+    </v-card>
+  </div>
 
   <!-- 地図 -->
-  <div style="height:80%; width:100%">
+  <div style="height:70%; width:100%">
     <l-map :use-global-leaflet="false" ref="map" v-model:zoom="zoom" :center="center">
         <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
